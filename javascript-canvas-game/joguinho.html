@@ -1,0 +1,271 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Pege as Moedas!</title>
+
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="style.css">
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script language="JavaScript" type="text/javascript">
+        
+            var jogando = false;
+            var moedas = 7;
+
+            var tempo = 59;
+
+            var mostrarMoeda = false;
+            var moedaEmCampo = false;
+
+            var objCanvas = null; 
+            var objContexto = null;
+
+            var xHeroi = 80;
+            var yHeroi = 80;
+
+            var xMonstro = 360;
+            var yMonstro = 360;
+
+            var xCoin = 200;
+            var yCoin = 200;
+
+            var imgFundo = new Image();
+            imgFundo.src = "img/fundo.png";        
+            var imgHeroi = new Image();
+            imgHeroi.src = "img/heroi.png";
+            var imgMonstro = new Image();
+            imgMonstro.src = "img/monstro.png";
+            var imgCoin = new Image();
+            imgCoin.src = 'img/coin.png';
+
+            function Iniciar() {
+
+                objCanvas = document.getElementById("meuCanvas");
+                objContexto = objCanvas.getContext("2d");
+                AtualizaTela();
+            }
+
+            function AtualizaTela() {
+
+                objContexto.drawImage(imgFundo, -12, -5);
+                objContexto.drawImage(imgHeroi, xHeroi, yHeroi);
+                objContexto.drawImage(imgMonstro, xMonstro, yMonstro);
+
+                if (mostrarMoeda) {
+                    imgCoin.src = 'img/coin.png';
+                    objContexto.drawImage(imgCoin, xCoin, yCoin);
+                    moedaEmCampo = true;
+                } else {
+                    imgCoin.src = '';
+                    objContexto.drawImage(imgCoin, xCoin, yCoin);
+                    moedaEmCampo = false;
+                }
+            }
+
+            function resetar() {
+
+                jogando = false;
+                tempo = 59;
+                $('#tempo').text('Tempo = 00:59');
+                mostrarMoeda = false;
+                moedaEmCampo = false;
+                moedas = 7;
+                xHeroi = 80;
+                yHeroi = 80;
+                xMonstro = 360;
+                yMonstro = 360;
+                AtualizaTela();
+            }
+
+            function MovimentoDoMonstro(direcao) {
+
+                switch (direcao) {
+                    case 0:
+                        if (xMonstro != 440)
+                            xMonstro = (xMonstro + 5);
+                        break;
+                    case 1:
+                        if (yMonstro != 410)
+                            yMonstro = (yMonstro + 5);
+                        break;
+                    case 2:
+                        if (xMonstro != 10)
+                            xMonstro = (xMonstro - 5);
+                        break;
+                    case 3:
+                        if (yMonstro != 0)
+                            yMonstro = (yMonstro - 5);
+                        break;
+                }
+                AtualizaTela();
+            }
+
+            function MovimentoDoHeroi(direcao) {
+
+                switch (direcao) {
+                    case 100:
+                        if (xHeroi != 440)
+                            xHeroi = (xHeroi + 10);
+                        break;
+                    case 115:
+                        if (yHeroi != 410)
+                            yHeroi = (yHeroi + 10);
+                        break;
+                    case 97:
+                        if (xHeroi != 10)
+                            xHeroi = (xHeroi - 10);
+                        break;
+                    case 119:
+                        if (yHeroi != 0)
+                            yHeroi = (yHeroi - 10);
+                        break;
+                }
+                AtualizaTela();
+            }
+
+            function setCordMoeda() {
+
+                xCoin = Math.round(Math.random() * (450 / 10)) * 10 + 30;
+
+                while (xCoin > 460 || xCoin < 20) {
+                    xCoin = Math.round(Math.random() * (450 / 10)) * 10 + 30;
+                }
+
+                yCoin = Math.round(Math.random() * (450 / 10)) * 10 + 30;
+
+                while (yCoin < 10 || yCoin > 420)
+                    yCoin = Math.round(Math.random() * (450 / 10)) * 10 + 30;
+            }
+
+            function DirecaoDoMonstro() {
+
+                var direcao;
+
+                if (xHeroi > xMonstro)
+                    direcao = 0;
+                else
+                    direcao = 2;
+
+                MovimentoDoMonstro(direcao);
+
+                if (yHeroi > yMonstro)
+                    direcao = 1;
+                else
+                    direcao = 3;
+
+                MovimentoDoMonstro(direcao);
+            }
+
+
+            function tecla() {
+
+                if (jogando)
+                    MovimentoDoHeroi(event.keyCode);
+            }
+
+
+            function jogar(){
+            
+                setInterval(function() { //Para contar os pontos e o tempo
+                    if (jogando == true) {
+                        tempo--;
+                        $('#tempo').text('Tempo = 00:' + tempo);
+                    }
+                }, 1000);
+
+                setInterval(function () {
+
+                    if (jogando)
+                        if (moedas >= 5 && moedas <= 7)
+                            DirecaoDoMonstro();
+                        else
+                            clearInterval();
+                }, 200);
+
+                setInterval(function () {
+
+                    if (jogando)
+                        if (moedas >= 3 && moedas < 5)
+                            DirecaoDoMonstro();
+                        else
+                            clearInterval();
+                }, 100);
+
+                setInterval(function () {
+
+                    if (jogando)
+                        if (moedas >= 0 && moedas < 3)
+                            DirecaoDoMonstro();
+                        else
+                            clearInterval();
+                }, 75);
+
+                setInterval(function () { //Coisas que devem serem feitas a todo momento
+
+                    var resposta;
+
+                    if (Math.abs(xCoin - xHeroi) <= 10 && Math.abs(yCoin - yHeroi) <= 10)
+                        mostrarMoeda = false;
+
+                    if (Math.abs(xHeroi - xMonstro) <= 10 && Math.abs(yHeroi - yMonstro) <= 10) {
+
+                        jogando = false;
+
+                        alert("Você morreu em " + tempo + " segundos!");                           
+                        resetar();
+                    }  
+
+                    if (moedas == -1) {
+
+                        alert("Parabéns! Você pegou todas as moedas em 00:" + tempo + " segundos!");
+                        resetar();
+                    }
+
+                }, 1);
+
+                setInterval(function () { //Pra Spawnar as moedas
+
+                    if (jogando) {
+                        if (!moedaEmCampo && moedas > -1) {
+
+                            moedas--;
+
+                            setCordMoeda();
+
+                            mostrarMoeda = true;
+                        }          
+                    }
+                }, 5000);
+            }
+
+            $(document).ready(function(){
+
+                jogar();
+
+                document.onkeypress = tecla;
+                
+                $('button').click(function () {
+
+                    jogando = true;
+                    setCordMoeda();
+                    moedas--;
+                    mostrarMoeda = true;
+                });
+            });
+
+        </script>
+    </head>
+
+    <body onLoad="Iniciar();">
+
+        <canvas id="meuCanvas" width="512" height="480">
+            Seu browser não suporta esse jogo, atualize-se!!!
+        </canvas>
+        <br>
+        <div id="menu">
+            <p>Pegue todas as moedas dentro do tempo! E cuidado com o monstro!</p>
+            <button onclick="jogando = true;">Iniciar</button>
+            <p id="tempo">Tempo = 00:59</p>
+        </div>
+    </body>
+</html>

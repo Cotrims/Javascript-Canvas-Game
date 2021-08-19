@@ -1,0 +1,30 @@
+@font-face {
+    font-family: 'Retro Gaming';
+    src: url('Retro Gaming.ttf');
+}
+
+body {
+    background-image: url('img/fundosite.png');
+    font-family: Retro Gaming;
+    color: white;
+}
+
+canvas {
+    position: absolute;
+    right: 33.7%;
+    top: 17.5%;
+}
+
+#menu {
+    width: 300px;
+    height: 150px;
+    margin-left: 70px;
+    margin-top: 2.5px;
+    text-align: center;
+}
+
+button {
+    font-family: Retro Gaming;
+    border: 3px dotted #3f8630;
+    padding: 5px;
+}
